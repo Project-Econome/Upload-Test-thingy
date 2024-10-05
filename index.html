@@ -3,18 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload to GitHub</title>
+    <title>Local File Handler</title>
 </head>
 <body>
-    <h1>Upload Files/Folders to GitHub</h1>
+    <h1>Select Files to Handle Locally</h1>
 
-    <form id="uploadForm">
-        <label for="fileInput">Select files/folders:</label>
-        <input type="file" id="fileInput" multiple webkitdirectory>
-        <br><br>
-        <button type="submit">Upload to GitHub</button>
-    </form>
+    <!-- File input field -->
+    <input type="file" id="fileInput" multiple>
+    <br><br>
 
-    <script src="upload.js"></script>
+    <button id="processFilesBtn">Process Files</button>
+
+    <h2>File Details:</h2>
+    <div id="fileDetails"></div>
+
+    <script>
+        // Select file input and button
+        const fileInput = document.getElementById('fileInput');
+        const fileDetailsDiv = document.getElementById('fileDetails');
+        const processFilesBtn = document.getElementById('processFilesBtn');
+
+        // Function to display file details
+        function displayFileDetails(files) {
+            fileDetailsDiv.innerHTML = ''; // Clear previous file details
+            Array.from(files).forEach(file => {
+                // Display basic info about the file
+                const fileInfo = document.createElement('div');
+                fileInfo.innerHTML = `<strong>File Name:</strong> ${file.name} <br>
+                                      <strong>File Size:</strong> ${file.size} bytes <br>
+                                      <strong>File Type:</strong> ${file.type}`;
+                fileDetailsDiv.appendChild(fileInfo);
+
+                // Optionally, you can also read the content of the file (e.g., for preview)
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileContent = document.createElement('p');
+                    fileContent.innerText = `File Content Preview: ${e.target.result.slice(0, 100)}...`;
+                    fileDetailsDiv.appendChild(fileContent);
+                };
+                reader.readAsText(file); // or readAsDataURL(file) for images, etc.
+            });
+        }
+
+        // Event listener for when the 'Process Files' button is clicked
+        processFilesBtn.addEventListener('click', () => {
+            const files = fileInput.files;
+            if (files.length > 0) {
+                displayFileDetails(files);  // Process and show file details
+            } else {
+                alert('No files selected.');
+            }
+        });
+    </script>
 </body>
 </html>
